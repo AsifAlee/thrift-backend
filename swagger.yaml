@@ -1,0 +1,624 @@
+openapi: 3.0.0
+info:
+  title: E-Commerce API
+  description: E-Commerce Application API documentation
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token # the name of the cookie
+
+security:
+  - cookieAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Bad request
+  
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User logged in successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: Logout user
+      responses:
+        '200':
+          description: User logged out successfully
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Returns all users (Admin only)
+      responses:
+        '200':
+          description: A list of users
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /users/showMe:
+    get:
+      tags:
+        - Users
+      summary: Get current authenticated user
+      responses:
+        '200':
+          description: Current user information
+        '401':
+          description: Unauthorized
+
+  /users/updateUser:
+    patch:
+      tags:
+        - Users
+      summary: Update user details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: User updated successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /users/upatePassword:
+    patch:
+      tags:
+        - Users
+      summary: Update user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password updated successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a single user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Get all products
+      responses:
+        '200':
+          description: A list of products
+    
+  /products/createProduct:
+    post:
+      tags:
+        - Products
+      summary: Create a newly product
+      description: Admin only
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                description:
+                  type: string
+                image:
+                  type: string
+                category:
+                  type: string
+                company:
+                  type: string
+                colors:
+                  type: array
+                  items:
+                    type: string
+                featured:
+                  type: boolean
+                freeShipping:
+                  type: boolean
+                inventory:
+                  type: number
+      responses:
+        '201':
+          description: Product created successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get a single product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product details
+        '404':
+          description: Product not found
+    patch:
+      tags:
+        - Products
+      summary: Update a product
+      description: Admin only
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Product updated successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Product not found
+
+    delete:
+      tags:
+        - Products
+      summary: Delete a product
+      description: Admin only
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product deleted successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Product not found
+
+  /products/uploadImage:
+    post:
+      tags:
+        - Products
+      summary: Upload product image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Image uploaded successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /reviews:
+    get:
+      tags:
+        - Reviews
+      summary: Get all reviews
+      responses:
+        '200':
+          description: A list of reviews
+    
+    post:
+      tags:
+        - Reviews
+      summary: Create a review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+                - title
+                - comment
+                - product
+              properties:
+                rating:
+                  type: number
+                  minimum: 1
+                  maximum: 5
+                title:
+                  type: string
+                comment:
+                  type: string
+                product:
+                  type: string
+      responses:
+        '201':
+          description: Review created successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /reviews/{id}:
+    get:
+      tags:
+        - Reviews
+      summary: Get a single review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Review details
+        '404':
+          description: Review not found
+    patch:
+      tags:
+        - Reviews
+      summary: Update a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: number
+                title:
+                  type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Review updated successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Review not found
+
+    delete:
+      tags:
+        - Reviews
+      summary: Delete a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Review deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Review not found
+
+  /reviews/{id}/reviews:
+    get:
+      tags:
+        - Reviews
+      summary: Get reviews for a specific product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of reviews for the product
+
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: Get all orders
+      description: Admin only
+      responses:
+        '200':
+          description: A list of orders
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+    post:
+      tags:
+        - Orders
+      summary: Create an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tax
+                - shippingFee
+                - items
+              properties:
+                tax:
+                  type: number
+                shippingFee:
+                  type: number
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product:
+                        type: string
+                      amount:
+                        type: number
+      responses:
+        '201':
+          description: Order created successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+
+  /orders/showAllMyOrders:
+    get:
+      tags:
+        - Orders
+      summary: Get current authenticated user's orders
+      responses:
+        '200':
+          description: A list of orders
+        '401':
+          description: Unauthorized
+
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get a single order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+        '401':
+          description: Unauthorized
+        '404':
+          description: Order not found
+    
+    patch:
+      tags:
+        - Orders
+      summary: Update order status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paymentIntentId:
+                  type: string
+      responses:
+        '200':
+          description: Order updated successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Order not found
+
+    delete:
+      tags:
+        - Orders
+      summary: Delete an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Order not found
+
+  /seed/users:
+    post:
+      tags:
+        - Seed
+      summary: Seed Users
+      description: Inserts dummy users into the database
+      responses:
+        '201':
+          description: Users seeded successfully
+        '400':
+          description: Bad request
+
+  /seed/products:
+    post:
+      tags:
+        - Seed
+      summary: Seed Products
+      description: Inserts dummy products into the database. Requires an existing user.
+      responses:
+        '201':
+          description: Products seeded successfully
+        '400':
+          description: Bad request
+
+  /seed/reviews:
+    post:
+      tags:
+        - Seed
+      summary: Seed Reviews
+      description: Inserts dummy reviews into the database. Requires an existing user and product.
+      responses:
+        '201':
+          description: Reviews seeded successfully
+        '400':
+          description: Bad request
+
+  /seed/orders:
+    post:
+      tags:
+        - Seed
+      summary: Seed Orders
+      description: Inserts dummy orders into the database. Requires an existing user and product.
+      responses:
+        '201':
+          description: Orders seeded successfully
+        '400':
+          description: Bad request
