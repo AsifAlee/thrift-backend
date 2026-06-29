@@ -37,7 +37,7 @@ const createProduct = async (req, res) => {
   // }
 
   const slug = slugify(`${name}-${size}`, { lower: true });
-
+  const sku = `SKU-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   const product = await Product.create({
     name,
     slug,
@@ -51,6 +51,7 @@ const createProduct = async (req, res) => {
     category,
     images,
     tags,
+    sku,
     user: req.user.userId,
     createdBy: req.user.userId,
   });
