@@ -88,7 +88,14 @@ const ProductSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["shoes", "trousers", "bags", "football shirts", "sports gear"],
+      enum: [
+        "shoes",
+        "trousers",
+        "jackets",
+        "bags",
+        "football shirts",
+        "sports gear",
+      ],
       required: true,
       index: true,
     },
